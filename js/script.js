@@ -28,3 +28,46 @@ sections.forEach(section => observer.observe(section));
 document.querySelectorAll('.project-link[href="#"]').forEach(link => {
     link.addEventListener("click", event => event.preventDefault());
 });
+
+
+/*// Anima os elementos conforme entram na area visivel da tela. */
+document.documentElement.classList.add("js-reveal-ready");
+
+const revealSelectors = [
+    ".hero-content > *",
+    ".hero-art",
+    ".hero-info .info-pill",
+    ".about-grid > *",
+    ".section-heading",
+    ".project-card",
+    ".skills-grid > *",
+    ".skill",
+    ".education-heading",
+    ".education-item",
+    ".contact-box > *"
+];
+
+const revealElements = document.querySelectorAll(revealSelectors.join(", "));
+
+revealElements.forEach((element, index) => {
+    element.setAttribute("data-reveal", "");
+    element.style.setProperty("--reveal-delay", `${(index % 4) * 90}ms`);
+});
+
+if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.12,
+        rootMargin: "0px 0px -45px 0px"
+    });
+
+    revealElements.forEach((element) => revealObserver.observe(element));
+} else {
+    revealElements.forEach((element) => element.classList.add("is-visible"));
+}
